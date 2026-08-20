@@ -1,0 +1,4 @@
+_dev-archive/
+.vercel/
+.DS_Store
+Thumbs.db

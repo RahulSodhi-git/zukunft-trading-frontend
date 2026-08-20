@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zukunft Trading - Client Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{--ground:#03060E;--panel:rgba(9,17,34,.86);--panel-2:rgba(18,31,57,.72);--line:rgba(140,175,235,.18);--cyan:#22D3EE;--blue:#1997FF;--iris:#8B5CF6;--green:#22D08A;--amber:#F8C14A;--ink:#EEF6FF;--soft:#B9C8DD;--muted:#7F92AC;--bad:#FF5B7A}
+  *{box-sizing:border-box}
+  html{background:var(--ground);min-height:100%}
+  body{margin:0;min-height:100svh;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:radial-gradient(900px 540px at 76% 20%,rgba(34,211,238,.13),transparent 64%),radial-gradient(680px 420px at 18% 86%,rgba(139,92,246,.1),transparent 62%),var(--ground);overflow-x:hidden}
+  canvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:0;opacity:.74}
+  .vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 95% at 50% 0%,transparent 45%,rgba(3,6,14,.54) 84%,var(--ground) 100%)}
+  .top{position:sticky;top:0;z-index:8;border-bottom:1px solid rgba(34,211,238,.22);background:rgba(3,7,16,.82);backdrop-filter:blur(18px)}
+  .top-in{width:min(1220px,100%);margin:auto;padding:0 22px;height:66px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:850;font-size:18px}.mark{width:35px;height:35px;border-radius:11px;display:grid;place-items:center;font:850 12px ui-monospace,monospace;background:linear-gradient(145deg,rgba(34,211,238,.22),rgba(59,130,246,.18));border:1px solid rgba(34,211,238,.7);box-shadow:0 0 28px rgba(34,211,238,.18)}
+  .top-actions{display:flex;gap:10px;align-items:center}.btn{border:1px solid transparent;border-radius:13px;padding:10px 16px;font:850 14px inherit;color:#fff;text-decoration:none;cursor:pointer}.btn-primary{background:linear-gradient(135deg,var(--blue),#5B9BFF);box-shadow:0 14px 34px -16px rgba(59,130,246,.9)}.btn-ghost{background:rgba(255,255,255,.04);border-color:var(--line);color:var(--soft)}
+  main{position:relative;z-index:2;width:min(1220px,100%);margin:auto;padding:34px 22px 48px}
+  .status{position:relative;overflow:hidden;border:1px solid rgba(34,211,238,.34);border-radius:22px;background:linear-gradient(135deg,rgba(13,31,57,.9),rgba(7,13,28,.86));box-shadow:0 28px 90px rgba(0,0,0,.44),0 0 76px rgba(34,211,238,.08);padding:22px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+  .status:before{content:"";position:absolute;inset:-30% -10% auto auto;width:520px;height:260px;background:radial-gradient(circle,rgba(34,211,238,.18),transparent 66%);transform:rotate(-12deg);pointer-events:none}
+  .kicker{margin:0 0 8px;font-size:11px;font-weight:850;letter-spacing:.28em;text-transform:uppercase;color:var(--cyan)}
+  h1{margin:0;font-size:clamp(32px,5vw,64px);line-height:.96;letter-spacing:-.045em}.gradient{background:linear-gradient(90deg,#EAF7FF,var(--cyan),var(--iris));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{margin:14px 0 0;max-width:66ch;color:var(--soft);font-size:16px;line-height:1.55}
+  .badge{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(34,211,238,.32);border-radius:999px;padding:8px 12px;background:rgba(34,211,238,.08);font-weight:850;color:#DFFBFF}.badge:before{content:"";width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 22px var(--green)}
+  .timer-card{min-width:260px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.045);padding:16px;position:relative;z-index:1}.timer-card span{display:block;color:var(--muted);font-size:11px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.timer{margin-top:8px;font:900 clamp(25px,3.6vw,42px) ui-monospace,monospace;color:#fff}.timer-note{margin:6px 0 0;color:var(--soft);font-size:12.5px}
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:18px;margin-top:18px}
+  .panel{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,var(--panel),rgba(5,10,22,.88));box-shadow:0 20px 60px rgba(0,0,0,.34);overflow:hidden}
+  .panel-head{padding:18px 18px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}.panel h2{margin:0;font-size:19px;letter-spacing:-.025em}.mini{color:var(--muted);font-size:12px;font-weight:800}
+  .profile{padding:16px 18px;display:grid;gap:12px}.row{display:grid;gap:3px;padding:12px;border:1px solid rgba(140,175,235,.14);border-radius:14px;background:rgba(255,255,255,.028)}.row span{color:var(--muted);font-size:10.5px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.row b{font-size:14px;overflow-wrap:anywhere}
+  .steps{padding:0 18px 18px;display:grid;gap:9px}.step{display:flex;gap:10px;align-items:center;color:var(--soft);font-size:13px}.dot{width:22px;height:22px;border-radius:8px;display:grid;place-items:center;border:1px solid rgba(34,211,238,.35);background:rgba(34,211,238,.08);color:var(--cyan);font:850 11px ui-monospace,monospace;flex:0 0 auto}
+  .dashboard{min-height:650px;display:grid;grid-template-rows:auto 1fr}.dash-tools{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}.dash-title{display:flex;align-items:center;gap:10px;font-weight:900}.pulse{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 18px var(--green)}
+  iframe{width:100%;height:100%;border:0;background:#050914}.frame-wrap{position:relative;min-height:560px}.fallback{position:absolute;inset:auto 18px 18px auto;z-index:1;font-size:12.5px;color:var(--muted);background:rgba(3,6,14,.72);border:1px solid var(--line);border-radius:999px;padding:8px 10px;backdrop-filter:blur(12px)}
+  .locked{padding:28px;color:var(--soft)}
+  @media(max-width:900px){.status{grid-template-columns:1fr}.timer-card{min-width:0}.grid{grid-template-columns:1fr}.dashboard{min-height:560px}.frame-wrap{min-height:470px}}
+  @media(max-width:560px){.top-in{height:58px;padding:0 14px}.brand{font-size:15px}.top-actions .btn-ghost{display:none}main{padding:18px 12px 32px}.status{padding:17px;border-radius:18px}h1{font-size:34px}.lead{font-size:14px}.timer{font-size:27px}.panel{border-radius:17px}.dash-tools{align-items:flex-start;flex-direction:column}.frame-wrap{min-height:520px}.btn{padding:9px 12px;font-size:13px}}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><span class="mark">ZT</span><span>Zukunft Trading</span></div>
+    <div class="top-actions">
+      <a class="btn btn-ghost" href="zukunft-trading.html">Website</a>
+      <button class="btn btn-primary" id="logout" type="button">Logout</button>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="status" id="portalStatus">
+    <div>
+      <p class="kicker">Client portal</p>
+      <div class="badge" id="planBadge">Checking account</div>
+      <h1 id="portalTitle">Opening your <span class="gradient">trading space</span></h1>
+      <p class="lead" id="portalLead">Loading account details and preparing your dashboard connection.</p>
+    </div>
+    <div class="timer-card" id="timerCard">
+      <span id="timerLabel">Demo time left</span>
+      <div class="timer" id="demoTimer">--:--:--</div>
+      <p class="timer-note" id="timerNote">Your free demo runs for 2 days after verification.</p>
+    </div>
+  </section>
+
+  <section class="grid" id="portalGrid">
+    <aside class="panel">
+      <div class="panel-head">
+        <h2>Account</h2>
+        <span class="mini" id="accountStatus">Active</span>
+      </div>
+      <div class="profile">
+        <div class="row"><span>Zukunft ID</span><b id="customerNumber">-</b></div>
+        <div class="row"><span>Name</span><b id="clientName">-</b></div>
+        <div class="row"><span>Email</span><b id="clientEmail">-</b></div>
+        <div class="row"><span>Country</span><b id="clientCountry">-</b></div>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="dot">1</span><span>Account verified</span></div>
+        <div class="step"><span class="dot">2</span><span>Dashboard connected</span></div>
+        <div class="step"><span class="dot">3</span><span>Binance setup comes next</span></div>
+      </div>
+    </aside>
+
+    <section class="panel dashboard">
+      <div class="dash-tools">
+        <div class="dash-title"><span class="pulse"></span><span>Live AI Trading Dashboard</span></div>
+        <a class="btn btn-primary" href="http://161.118.176.44:8501/" target="_blank" rel="noopener">Open in new tab</a>
+      </div>
+      <div class="frame-wrap" id="frameWrap">
+        <iframe title="Zukunft Trading Dashboard" src="http://161.118.176.44:8501/"></iframe>
+        <div class="fallback">If the dashboard does not appear, open it in a new tab.</div>
+      </div>
+    </section>
+  </section>
+</main>
+<script>
+(function(){
+  var API=window.ZUKUNFT_API_URL||(location.protocol==='file:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'?'http://localhost:5050':'https://api.zukunfttrading.com');
+  var token=localStorage.getItem('ztToken')||localStorage.getItem('zukunftToken');
+  var timerInterval=null;
+  function $(id){return document.getElementById(id)}
+  function text(id,value){var el=$(id);if(el)el.textContent=value==null?'-':String(value)}
+  function escapeDash(v){return v||'-'}
+  function goLogin(message){
+    $('portalTitle').innerHTML='Session <span class="gradient">needed</span>';
+    text('planBadge','Login required');
+    text('portalLead',message||'Please login again to open your client portal.');
+    $('timerCard').style.display='none';
+    $('portalGrid').innerHTML='<div class="panel locked"><h2>Client session missing</h2><p>Please go back to Account Signup / Login and sign in again.</p><p><a class="btn btn-primary" href="account.html">Open login</a></p></div>';
+  }
+  function pad(n){return String(Math.max(0,n)).padStart(2,'0')}
+  function startTimer(expiresAt){
+    if(timerInterval)clearInterval(timerInterval);
+    function render(){
+      var end=new Date(expiresAt).getTime(),diff=end-Date.now();
+      if(!expiresAt||isNaN(end)){text('demoTimer','2 days');return}
+      if(diff<=0){text('demoTimer','Expired');text('timerNote','Your demo period has ended. Upgrade to Pro to continue live setup.');return}
+      var s=Math.floor(diff/1000),d=Math.floor(s/86400);s-=d*86400;var h=Math.floor(s/3600);s-=h*3600;var m=Math.floor(s/60);s-=m*60;
+      text('demoTimer',(d>0?d+'d ':'')+pad(h)+':'+pad(m)+':'+pad(s));
+    }
+    render();timerInterval=setInterval(render,1000);
+  }
+  function renderUser(user){
+    var type=user.account_type||user.accountType;
+    var demo=type==='starter_demo';
+    text('customerNumber',user.customer_number);
+    text('clientName',[user.first_name,user.last_name].filter(Boolean).join(' ')||'-');
+    text('clientEmail',user.email);
+    text('clientCountry',user.country);
+    text('accountStatus',(user.plan_status||user.account_status||'active').replace(/_/g,' '));
+    if(demo){
+      text('planBadge','Free Demo Account');
+      $('portalTitle').innerHTML='Free demo <span class="gradient">client portal</span>';
+      text('portalLead','Your 2-day demo account is active. Watch the dashboard, understand the trading flow, and upgrade when you are ready for live Binance setup.');
+      $('timerCard').style.display='block';
+      text('timerLabel','Free demo time left');
+      startTimer(user.demo_expires_at);
+    }else{
+      text('planBadge','Pro Live Account');
+      $('portalTitle').innerHTML='Pro live <span class="gradient">client portal</span>';
+      text('portalLead','Your live account area is ready. Use the dashboard for performance, activity, and next setup steps.');
+      $('timerCard').style.display='block';
+      text('timerLabel','Account status');
+      text('demoTimer','Live');
+      text('timerNote','No demo countdown. Pro access is managed by your active subscription.');
+    }
+  }
+  if(!token){goLogin();return}
+  fetch(API+'/me',{headers:{Authorization:'Bearer '+token}}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'Session expired');return d})}).then(function(d){if(!d.user)throw new Error('Account not found');renderUser(d.user)}).catch(function(err){goLogin(err.message)});
+  $('logout').addEventListener('click',function(){localStorage.removeItem('ztToken');localStorage.removeItem('zukunftToken');location.href='account.html'});
+  var cv=$('bg'),ctx=cv.getContext('2d'),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,mx=0,my=0,tmx=0,tmy=0;
+  function resize(){cv.width=innerWidth;cv.height=innerHeight}resize();addEventListener('resize',resize);
+  addEventListener('pointermove',function(e){tmx=(e.clientX/innerWidth-.5)*2;tmy=(e.clientY/innerHeight-.5)*2},{passive:true});
+  function frame(t){mx+=(tmx-mx)*.03;my+=(tmy-my)*.03;ctx.clearRect(0,0,cv.width,cv.height);var W=cv.width,H=cv.height,cx=W*.7+mx*20,cy=H*.36+my*12,r=Math.min(W,H);var g=ctx.createRadialGradient(cx,cy,0,cx,cy,r*.72);g.addColorStop(0,'rgba(34,211,238,.12)');g.addColorStop(.42,'rgba(25,151,255,.035)');g.addColorStop(1,'transparent');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.strokeStyle='rgba(34,211,238,.1)';ctx.lineWidth=1;for(var i=0;i<5;i++){ctx.beginPath();ctx.ellipse(cx,cy,r*(.2+i*.08),r*(.055+i*.021),(12+i*18+(reduce?0:t*.002))*Math.PI/180,0,Math.PI*2);ctx.stroke()}if(!reduce)requestAnimationFrame(frame)}requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
