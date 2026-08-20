@@ -95,7 +95,7 @@
 </main>
 <script>
 (function(){
-  var API=window.ZUKUNFT_API_URL||(location.protocol==='file:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'?'http://localhost:5050':'https://api.zukunfttrading.com');
+  var API=window.ZUKUNFT_API_URL||(location.protocol==='file:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'?'http://localhost:5050':'https://zukunft-trading-backend.onrender.com');
   var token=localStorage.getItem('ztToken')||localStorage.getItem('zukunftToken');
   var timerInterval=null;
   function $(id){return document.getElementById(id)}
@@ -156,3 +156,4 @@
 </script>
 </body>
 </html>
+
