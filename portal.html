@@ -98,9 +98,11 @@
   var API=window.ZUKUNFT_API_URL||(location.protocol==='file:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'?'http://localhost:5050':'https://zukunft-trading-backend.onrender.com');
   var token=localStorage.getItem('ztToken')||localStorage.getItem('zukunftToken');
   var timerInterval=null;
+  var inactivityTimer=null;
   function $(id){return document.getElementById(id)}
   function text(id,value){var el=$(id);if(el)el.textContent=value==null?'-':String(value)}
   function escapeDash(v){return v||'-'}
+  function clearSession(){localStorage.removeItem('ztToken');localStorage.removeItem('zukunftToken')}
   function goLogin(message){
     $('portalTitle').innerHTML='Session <span class="gradient">needed</span>';
     text('planBadge','Login required');
@@ -145,9 +147,14 @@
       text('timerNote','No demo countdown. Pro access is managed by your active subscription.');
     }
   }
+  function expireInactive(){clearSession();goLogin('Logged out after 5 minutes of inactivity. Please login again.')}
+  function resetInactivity(){clearTimeout(inactivityTimer);inactivityTimer=setTimeout(expireInactive,5*60*1000)}
   if(!token){goLogin();return}
+  addEventListener('beforeunload',clearSession);
+  ['pointermove','mousedown','keydown','touchstart','scroll'].forEach(function(eventName){addEventListener(eventName,resetInactivity,{passive:true})});
+  resetInactivity();
   fetch(API+'/me',{headers:{Authorization:'Bearer '+token}}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'Session expired');return d})}).then(function(d){if(!d.user)throw new Error('Account not found');renderUser(d.user)}).catch(function(err){goLogin(err.message)});
-  $('logout').addEventListener('click',function(){localStorage.removeItem('ztToken');localStorage.removeItem('zukunftToken');location.href='account.html'});
+  $('logout').addEventListener('click',function(){clearSession();location.href='account.html'});
   var cv=$('bg'),ctx=cv.getContext('2d'),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,mx=0,my=0,tmx=0,tmy=0;
   function resize(){cv.width=innerWidth;cv.height=innerHeight}resize();addEventListener('resize',resize);
   addEventListener('pointermove',function(e){tmx=(e.clientX/innerWidth-.5)*2;tmy=(e.clientY/innerHeight-.5)*2},{passive:true});
