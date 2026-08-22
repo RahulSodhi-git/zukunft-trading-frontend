@@ -175,17 +175,6 @@
   @media(max-width:1180px){.steps{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:700px){.how-wrap{padding-left:18px;padding-right:18px}.steps{grid-template-columns:1fr}.step{min-height:185px}.step p{max-width:none}}
 
-  /* history */
-  .history-wrap{max-width:none;width:100%;padding-left:clamp(22px,3.5vw,68px);padding-right:clamp(22px,3.5vw,68px)}
-  .history-wrap .sec-head{max-width:760px}
-  .history-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-top:46px}
-  .history-card{min-height:190px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(15,27,52,.66),rgba(7,13,27,.58));padding:28px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
-  .history-card::after{content:"";position:absolute;right:-70px;bottom:-90px;width:220px;height:220px;background:radial-gradient(circle,rgba(34,211,238,.12),transparent 68%);pointer-events:none}
-  .history-card .metric{font-size:clamp(44px,4vw,72px);line-height:.9;font-weight:850;letter-spacing:-.04em;background:linear-gradient(120deg,#fff,var(--accent-2),var(--iris));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .history-card h3{font-size:17px;margin:22px 0 8px}
-  .history-card p{font-size:13.5px;color:var(--ink-soft);margin:0}
-  @media(max-width:1180px){.history-grid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:700px){.history-wrap{padding-left:18px;padding-right:18px}.history-grid{grid-template-columns:1fr}.history-card{min-height:150px}}
   .proof-wrap{max-width:none;width:100%;padding-left:clamp(22px,3.5vw,68px);padding-right:clamp(22px,3.5vw,68px)}
   .proof-grid{display:grid;grid-template-columns:minmax(280px,.82fr) minmax(360px,1.18fr);gap:18px;margin-top:46px;align-items:stretch}
   .proof-panel{border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,rgba(15,27,52,.68),rgba(7,13,27,.6));padding:30px;position:relative;overflow:hidden}
@@ -468,7 +457,6 @@
       <a href="#about">About</a>
       <a href="#features">Features</a>
       <a href="#how">How it works</a>
-      <a href="#history">History</a>
       <a href="#future">Future</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
@@ -481,7 +469,6 @@
         <a href="#about">About</a>
         <a href="#features">Features</a>
         <a href="#how">How it works</a>
-        <a href="#history">History</a>
         <a href="#future">Future</a>
         <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
@@ -552,22 +539,6 @@
     </div>
   </section>
 
-  <!-- HISTORY -->
-  <section class="sec" id="history">
-    <div class="wrap history-wrap">
-      <div class="sec-head reveal">
-        <p class="kicker">History</p>
-        <h2 class="h2">Zukunft Trading in Numbers</h2>
-      </div>
-      <div class="history-grid">
-        <div class="history-card reveal"><div class="metric mono">XX</div><h3>People Joined</h3><p>Total users who created an account.</p></div>
-        <div class="history-card reveal"><div class="metric mono">XX%</div><h3>Total Profit Made</h3><p>Combined profit percentage generated so far.</p></div>
-        <div class="history-card reveal"><div class="metric mono">XX</div><h3>Active Bots</h3><p>Bot accounts currently connected and running.</p></div>
-        <div class="history-card reveal"><div class="metric mono">XX</div><h3>Total Trades</h3><p>Trades executed through Zukunft Trading.</p></div>
-        <div class="history-card reveal"><div class="metric mono">XX</div><h3>Live Accounts Connected</h3><p>Exchange accounts connected to the bot.</p></div>
-      </div>
-    </div>
-  </section>
 
   <!-- PROOF -->
   <section class="sec" id="proof">
@@ -1104,7 +1075,7 @@
   window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
 
   /* active section nav */
-  var sectionIds=['about','features','how','history','future','pricing','faq','career','contact'];
+  var sectionIds=['about','features','how','future','pricing','faq','career','contact'];
   var navTargets=document.querySelectorAll('nav.links a,#menuPanel a');
   function setActive(id){
     navTargets.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+id);});
