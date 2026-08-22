@@ -1001,23 +1001,82 @@
       .catch(function(err){setMsg('loginMsg',err.message,true);});
   });
 
+  var LANGUAGE_KEY='ztPreferredLanguage';
+  var pendingLanguageTimer=null;
   window.googleTranslateElementInit=function(){
     new google.translate.TranslateElement({pageLanguage:'en',autoDisplay:false},'google_translate_element');
     hideTranslateChrome();
+    applyStoredLanguageToWidget();
   };
   function hideTranslateChrome(){
     document.body.style.top='0px';
     document.documentElement.style.marginTop='0px';
     document.querySelectorAll('.goog-te-banner-frame,.goog-te-menu-frame,iframe.skiptranslate,.skiptranslate iframe').forEach(function(el){el.style.display='none';});
   }
-  function resetToEnglish(){
-    var expires='Thu, 01 Jan 1970 00:00:00 GMT';
-    document.cookie='googtrans=; expires='+expires+'; path=/';
-    document.cookie='googtrans=; expires='+expires+'; path=/; domain=localhost';
-    document.cookie='googtrans=; expires='+expires+'; path=/; domain='+location.hostname;
+  function cookieDomains(){
+    var host=location.hostname;
+    var domains=[''];
+    if(!host)return domains;
+    domains.push(host);
+    domains.push('.'+host);
+    var parts=host.split('.');
+    if(parts.length>2)domains.push('.'+parts.slice(-2).join('.'));
+    return domains.filter(function(v,i,a){return a.indexOf(v)===i;});
+  }
+  function writeTranslateCookie(value,maxAge){
+    cookieDomains().forEach(function(domain){
+      var cookie='googtrans='+value+'; path=/; max-age='+maxAge+'; SameSite=Lax';
+      if(domain)cookie+='; domain='+domain;
+      document.cookie=cookie;
+    });
+  }
+  function clearTranslateState(){
+    writeTranslateCookie('',0);
     localStorage.removeItem('googtrans');
     sessionStorage.removeItem('googtrans');
+  }
+  function reloadForCleanTranslation(){
+    if(location.protocol==='file:')return false;
     location.reload();
+    return true;
+  }
+  function setLanguageUi(lang){
+    var selected=languages.find(function(item){return item[0]===lang;})||languages[0];
+    if(langTrigger)langTrigger.textContent=selected[1];
+    document.querySelectorAll('.lang-option').forEach(function(option){
+      option.classList.toggle('active',option.dataset.lang===selected[0]);
+    });
+    document.documentElement.lang=selected[0]||'en';
+  }
+  function applyStoredLanguageToWidget(){
+    var lang=localStorage.getItem(LANGUAGE_KEY)||'';
+    setLanguageUi(lang);
+    if(!lang)return;
+    clearTimeout(pendingLanguageTimer);
+    pendingLanguageTimer=setTimeout(function(){
+      var combo=document.querySelector('.goog-te-combo');
+      if(!combo)return;
+      combo.value=lang;
+      combo.dispatchEvent(new Event('change'));
+      setTimeout(hideTranslateChrome,120);
+      setTimeout(fitHeader,400);
+    },250);
+  }
+  function chooseLanguage(lang){
+    setLanguageUi(lang);
+    if(langPicker){langPicker.classList.remove('open');langTrigger.setAttribute('aria-expanded','false');}
+    if(lang===''){
+      localStorage.removeItem(LANGUAGE_KEY);
+      clearTranslateState();
+      if(reloadForCleanTranslation())return;
+      var englishCombo=document.querySelector('.goog-te-combo');
+      if(englishCombo){englishCombo.value='en';englishCombo.dispatchEvent(new Event('change'));}
+      return;
+    }
+    localStorage.setItem(LANGUAGE_KEY,lang);
+    writeTranslateCookie('/en/'+lang,31536000);
+    if(reloadForCleanTranslation())return;
+    applyStoredLanguageToWidget();
   }
   var languages=[
     ['', 'English'],['de','Deutsch'],['fr','Francais'],['es','Espanol'],['it','Italiano'],['pt','Portugues'],['nl','Nederlands'],['pl','Polski'],
@@ -1039,20 +1098,7 @@
   });
   langMenu.addEventListener('click',function(e){
     var btn=e.target.closest('.lang-option');if(!btn)return;
-    var val=btn.dataset.lang;
-    langTrigger.textContent=btn.textContent;
-    document.querySelectorAll('.lang-option').forEach(function(o){o.classList.toggle('active',o===btn);});
-    langPicker.classList.remove('open');langTrigger.setAttribute('aria-expanded','false');
-    if(val===''){resetToEnglish();return;}
-    var combo=document.querySelector('.goog-te-combo');
-    if(!combo){setMsg('signupMsg','Translation is still loading. Try again in a moment.',false);return;}
-    combo.value=val;combo.dispatchEvent(new Event('change'));
-    setTimeout(hideTranslateChrome,100);
-    setTimeout(hideTranslateChrome,700);
-    setTimeout(hideTranslateChrome,1600);
-    setTimeout(fitHeader,250);
-    setTimeout(fitHeader,1000);
-    setTimeout(fitHeader,2200);
+    chooseLanguage(btn.dataset.lang);
   });
   document.addEventListener('click',function(e){
     if(langPicker&&!langPicker.contains(e.target)){langPicker.classList.remove('open');langTrigger.setAttribute('aria-expanded','false');}
