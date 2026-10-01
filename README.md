@@ -4,7 +4,7 @@ Static frontend for Zukunft Trading.
 
 ## Local use
 
-Open `zukunft-trading.html` or `account.html` directly, or serve this folder with any static server.
+Open `zukunft-trading.html` or `account.html` directly, or serve this folder with any static server. The live flow is `account.html` -> `payment.html` -> `portal.html`.
 
 The account page calls the local backend when opened from `file://`, `localhost`, or `127.0.0.1`:
 

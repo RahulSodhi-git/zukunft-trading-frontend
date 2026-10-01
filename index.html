@@ -212,7 +212,7 @@
   @media(max-width:700px){.future-wrap{padding-left:18px;padding-right:18px}.future-timeline{padding-left:0}.future-timeline::before{left:31px}.future-step{padding-left:76px}}
 
   /* pricing */
-  .prices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:42px auto 0;align-items:stretch;max-width:980px}
+  .prices{display:grid;grid-template-columns:1fr;gap:18px;margin:42px auto 0;align-items:stretch;max-width:620px}
   @media(max-width:900px){.prices{grid-template-columns:1fr}}
   .plan{background:var(--glass);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;position:relative}
   .plan .flag{position:absolute;top:-13px;left:32px;background:linear-gradient(135deg,var(--accent),#5B9BFF);color:#fff;font-size:11px;font-weight:700;padding:6px 14px;border-radius:999px;letter-spacing:.05em}
@@ -574,7 +574,7 @@
             <div class="perf-card"><span>Max Drawdown</span><b data-perf="maxDrawdownPct">--</b></div>
           </div>
           <div class="perf-status" id="perfStatus">Awaiting live bot feed</div>
-          <div class="risk-strip">Past performance, backtests, or demo results do not guarantee future profits. Crypto markets are volatile and all trading is subject to market risk.</div>
+          <div class="risk-strip">Past performance or backtested results do not guarantee future profits. Crypto markets are volatile and all trading is subject to market risk.</div>
         </div>
       </div>
     </div>
@@ -616,23 +616,10 @@
     <div class="wrap">
       <div class="sec-head center reveal">
         <p class="kicker">Pricing</p>
-        <h2 class="h2">Start with Demo. Go Live with Pro.</h2>
-        <p class="lead">One account gets one bot. Starter is for demo testing, Pro is for live Binance trading.</p>
+        <h2 class="h2">One clear plan. Full Pro access.</h2>
+        <p class="lead">Create your verified account, activate Pro, then connect Binance Futures and your trading capital.</p>
       </div>
       <div class="prices">
-        <div class="plan reveal">
-          <h3>Starter Demo</h3>
-          <div class="price">Free<small>/2 days</small></div>
-          <div class="compare">
-            <div class="compare-row"><span class="mark yes">&#10003;</span><span><b>Account</b>Demo account connection</span></div>
-            <div class="compare-row"><span class="mark yes">&#10003;</span><span><b>API access</b>Demo API key only</span></div>
-            <div class="compare-row"><span class="mark yes">&#10003;</span><span><b>Bot and amount</b>1 bot, demo amount only</span></div>
-            <div class="compare-row"><span class="mark no">&#10005;</span><span><b>Dashboard access</b>No live dashboard access</span></div>
-            <div class="compare-row"><span class="mark yes">&#10003;</span><span><b>Trading view</b>Analyze inside Binance demo</span></div>
-            <div class="compare-row"><span class="mark no">&#10005;</span><span><b>Live trading</b>Demo only, basic setup access</span></div>
-          </div>
-          <a class="btn btn-ghost" href="account.html" target="_blank" rel="noopener">Start demo</a>
-        </div>
         <div class="plan reveal">
           <h3>Pro Live</h3>
           <div class="price">$100<small>/month</small></div>
@@ -658,12 +645,12 @@
         <div class="faq-col">
           <details class="reveal"><summary>Do I need trading experience? <span class="plus">+</span></summary><p>No. The bot handles execution after setup. You only create the account, connect Binance, set the amount, and monitor results.</p></details>
           <details class="reveal"><summary>Can I stop it anytime? <span class="plus">+</span></summary><p>Yes. You can stop the bot whenever you want from your account dashboard.</p></details>
-          <details class="reveal"><summary>What is the Starter Demo? <span class="plus">+</span></summary><p>Starter gives 2 days of demo account connection using a demo API key, so you can understand how the bot trades before going live.</p></details>
+          <details class="reveal"><summary>What happens after signup? <span class="plus">+</span></summary><p>After email and phone verification, log in, activate the $100/month Pro subscription, then connect Binance Futures and Coinalyze.</p></details>
         </div>
         <div class="faq-col">
           <details class="reveal"><summary>Is my money safe? <span class="plus">+</span></summary><p>Your funds stay inside your Binance account. Zukunft uses trade-only API access and cannot withdraw funds.</p></details>
           <details class="reveal"><summary>How do I connect Binance? <span class="plus">+</span></summary><p>Create a trade-only API key in Binance API Management, then paste the API key and secret into your Zukunft account.</p></details>
-          <details class="reveal"><summary>Still need help? <span class="plus">+</span></summary><p>Our chatbot will help with signup, Binance API setup, demo access, and Pro activation once connected.</p></details>
+          <details class="reveal"><summary>Still need help? <span class="plus">+</span></summary><p>Our chatbot can help with signup, payment, Binance API setup, and Pro activation.</p></details>
         </div>
       </div>
     </div>
@@ -690,7 +677,7 @@
         </div>
         <div class="info-panel reveal" id="contact">
           <h3>Contact</h3>
-          <p>Questions about signup, Binance API setup, demo access, Pro activation or collaboration? Send us a short message.</p>
+          <p>Questions about signup, payment, Binance API setup, Pro activation or collaboration? Send us a short message.</p>
           <form class="contact-form" id="contactForm">
             <input id="contactName" name="name" autocomplete="name" placeholder="Name" required>
             <input id="contactEmail" name="email" type="email" autocomplete="email" placeholder="Email" required>
@@ -749,7 +736,6 @@
         </div>
         <div class="auth-actions">
           <button class="btn btn-primary" type="submit">Create account</button>
-          <button class="btn btn-ghost" type="button" id="demoFill">Fill demo details</button>
         </div>
         <div class="auth-msg" id="signupMsg"></div>
         <div class="otp-box" id="signupOtp">
@@ -775,7 +761,7 @@
         </div>
         <div class="auth-msg" id="loginMsg"></div>
         <div class="otp-box" id="loginOtpBox">
-          <p>Demo OTP: <span class="demo-code" id="loginCode"></span></p>
+          <p>Login OTP: <span class="demo-code" id="loginCode"></span></p>
           <label>Enter OTP<input id="loginOtp" inputmode="numeric" maxlength="6"></label>
           <div class="auth-actions"><button class="btn btn-primary" type="button" id="verifyLogin">Verify login</button></div>
         </div>
@@ -795,15 +781,15 @@
       <button class="chat-close" id="chatClose" type="button" aria-label="Close chat">x</button>
     </div>
     <div class="chat-body" id="chatBody" aria-live="polite">
-      <div class="chat-msg bot">Hi. I can help with account signup, Binance API setup, Starter Demo, Pro activation, and support questions.</div>
+      <div class="chat-msg bot">Hi. I can help with account signup, payment, Binance API setup, Pro activation, and support questions.</div>
       <div class="chat-quick">
         <button class="chat-chip" type="button" data-chat-reply="How do I connect Binance?">Connect Binance</button>
-        <button class="chat-chip" type="button" data-chat-reply="What is the Starter Demo?">Starter Demo</button>
+        <button class="chat-chip" type="button" data-chat-reply="How does Pro payment work?">Pro payment</button>
         <button class="chat-chip" type="button" data-chat-reply="I want to create an account.">Create account</button>
       </div>
     </div>
     <form class="chat-form" id="chatForm">
-      <input id="chatInput" autocomplete="off" placeholder="Ask about setup, demo, API..." aria-label="Chat message">
+      <input id="chatInput" autocomplete="off" placeholder="Ask about setup, payment, API..." aria-label="Chat message">
       <button class="chat-send" type="submit" aria-label="Send message"><i data-lucide="send"></i></button>
     </form>
   </section>
@@ -847,7 +833,7 @@
     </a>
   </div>
   <div class="disc" id="risk-disclaimer">
-    <p><strong>Risk disclaimer:</strong> Trading cryptocurrencies and financial instruments involves substantial risk of loss and is not suitable for every investor. Nothing here is financial advice. Only trade with capital you can afford to lose. Past performance, backtested results, demo activity, win rate, or daily profit/loss figures do not guarantee future profits. All trading is subject to market risk, liquidity risk, exchange risk, technology risk, and strategy risk.</p>
+    <p><strong>Risk disclaimer:</strong> Trading cryptocurrencies and financial instruments involves substantial risk of loss and is not suitable for every investor. Nothing here is financial advice. Only trade with capital you can afford to lose. Past performance, backtested results, win rate, or daily profit/loss figures do not guarantee future profits. All trading is subject to market risk, liquidity risk, exchange risk, technology risk, and strategy risk.</p>
   </div>
   <div class="legal-notes" aria-label="Legal information">
     <section class="legal-note" id="privacy">
@@ -967,12 +953,6 @@
   setInterval(fitHeader,1500);
   ['signupPass','signupPass2'].forEach(function(id){$(id).addEventListener('input',paintRules);});
   $('dob').addEventListener('change',function(){$('age').value=calcAge($('dob').value);});
-  $('demoFill').addEventListener('click',function(){
-    $('firstName').value='Demo';$('lastName').value='Client';$('dob').value='1995-05-16';$('country').value='Germany';
-    $('age').value=calcAge($('dob').value);
-    $('signupEmail').value='demo@zukunfttrading.com';$('signupPhone').value='+491700000000';$('signupPass').value='Futurebot1';$('signupPass2').value='Futurebot1';
-    paintRules();setMsg('signupMsg','Demo details filled. Create the account to receive demo OTPs.',false);
-  });
   $('signupPane').addEventListener('submit',function(e){
     e.preventDefault();
     if(!paintRules()){setMsg('signupMsg','Password must be 8+ characters with 1 capital letter, 1 number, and both entries must match.',true);return;}
@@ -1242,9 +1222,9 @@
   }
   function botReply(text){
     var lower=text.toLowerCase();
-    var reply='Thanks. The assistant can guide signup, Binance trade-only API setup, demo access, Pro activation, and dashboard questions. A live chatbot connection can be added next.';
+    var reply='Thanks. The assistant can guide signup, secure payment, Binance trade-only API setup, Pro activation, and dashboard questions. A live chatbot connection can be added next.';
     if(lower.indexOf('binance')>-1||lower.indexOf('api')>-1)reply='To connect Binance: open Binance API Management, create an API key, keep withdrawal disabled, enable trade-only access, then paste the key and secret inside your Zukunft account.';
-    if(lower.indexOf('demo')>-1||lower.indexOf('starter')>-1)reply='Starter Demo is free for 2 days. It uses demo account connection and demo API key only, so users can understand the bot before going live.';
+    if(lower.indexOf('payment')>-1||lower.indexOf('subscribe')>-1)reply='After account and OTP verification, log in and activate Pro for $100 per month through secure Stripe Checkout. Bot setup unlocks after payment.';
     if(lower.indexOf('account')>-1||lower.indexOf('signup')>-1||lower.indexOf('login')>-1)reply='Use Account Signup / Login to create your account, verify email and phone, then continue to Binance API setup.';
     if(lower.indexOf('price')>-1||lower.indexOf('pro')>-1||lower.indexOf('$')>-1)reply='Pro is $100 per month for live Binance connection, one bot per account, full dashboard access, automatic execution, and setup support.';
     setMascotMood('thinking',1400);
