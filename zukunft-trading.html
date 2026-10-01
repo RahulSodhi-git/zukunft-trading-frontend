@@ -622,7 +622,7 @@
       <div class="prices">
         <div class="plan reveal">
           <h3>Pro Live</h3>
-          <div class="price">$100<small>/month</small></div>
+          <div class="price">$100<small> one time</small></div>
           <div class="compare">
             <div class="compare-row"><span class="mark yes">&#10003;</span><span><b>Account</b>Live Binance connection</span></div>
             <div class="compare-row"><span class="mark yes">&#10003;</span><span><b>API access</b>Trade-only Binance API key</span></div>
@@ -645,7 +645,7 @@
         <div class="faq-col">
           <details class="reveal"><summary>Do I need trading experience? <span class="plus">+</span></summary><p>No. The bot handles execution after setup. You only create the account, connect Binance, set the amount, and monitor results.</p></details>
           <details class="reveal"><summary>Can I stop it anytime? <span class="plus">+</span></summary><p>Yes. You can stop the bot whenever you want from your account dashboard.</p></details>
-          <details class="reveal"><summary>What happens after signup? <span class="plus">+</span></summary><p>After email and phone verification, log in, activate the $100/month Pro subscription, then connect Binance Futures and Coinalyze.</p></details>
+          <details class="reveal"><summary>What happens after signup? <span class="plus">+</span></summary><p>After email and phone verification, log in, complete the one-time $100 Pro activation, then connect Binance Futures and Coinalyze.</p></details>
         </div>
         <div class="faq-col">
           <details class="reveal"><summary>Is my money safe? <span class="plus">+</span></summary><p>Your funds stay inside your Binance account. Zukunft uses trade-only API access and cannot withdraw funds.</p></details>
@@ -1224,7 +1224,7 @@
     var lower=text.toLowerCase();
     var reply='Thanks. The assistant can guide signup, secure payment, Binance trade-only API setup, Pro activation, and dashboard questions. A live chatbot connection can be added next.';
     if(lower.indexOf('binance')>-1||lower.indexOf('api')>-1)reply='To connect Binance: open Binance API Management, create an API key, keep withdrawal disabled, enable trade-only access, then paste the key and secret inside your Zukunft account.';
-    if(lower.indexOf('payment')>-1||lower.indexOf('subscribe')>-1)reply='After account and OTP verification, log in and activate Pro for $100 per month through secure Stripe Checkout. Bot setup unlocks after payment.';
+    if(lower.indexOf('payment')>-1||lower.indexOf('subscribe')>-1)reply='After account and OTP verification, log in and activate Pro with a one-time $100 payment through secure PayPal Checkout. Bot setup unlocks after payment.';
     if(lower.indexOf('account')>-1||lower.indexOf('signup')>-1||lower.indexOf('login')>-1)reply='Use Account Signup / Login to create your account, verify email and phone, then continue to Binance API setup.';
     if(lower.indexOf('price')>-1||lower.indexOf('pro')>-1||lower.indexOf('$')>-1)reply='Pro is $100 per month for live Binance connection, one bot per account, full dashboard access, automatic execution, and setup support.';
     setMascotMood('thinking',1400);

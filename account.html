@@ -47,7 +47,7 @@
       <div>
         <p class="kicker">Client area</p>
         <h1>Create or access your account</h1>
-        <p class="lead">Create your Pro account, verify email and phone, then activate the $100/month subscription before connecting your trading setup.</p>
+        <p class="lead">Create your Pro account, verify email and phone, then complete the one-time $100 activation payment before connecting your trading setup.</p>
       </div>
       <div class="aside">
         <div class="mini-card"><b>Trade-only API</b><span>No withdrawal permission needed.</span></div>
@@ -60,7 +60,7 @@
     </div>
     <div class="auth-body">
       <form class="auth-pane" id="signupPane">
-        <div class="plan-choice" aria-label="Account type"><div class="plan-card"><b>Pro Live - $100/month</b><span>Live Binance Futures connection, dashboard and bot control</span></div></div>
+        <div class="plan-choice" aria-label="Account type"><div class="plan-card"><b>Pro Live - $100 one time</b><span>Live Binance Futures connection, dashboard and bot control</span></div></div>
         <div class="form-grid">
           <label>First name<input id="firstName" autocomplete="given-name" required></label>
           <label>Last name<input id="lastName" autocomplete="family-name" required></label>
@@ -89,7 +89,7 @@
         <div class="actions"><button class="btn btn-primary" type="submit">Login with password</button><button class="btn btn-ghost" type="button" id="requestLoginOtp">Request OTP</button></div>
         <div class="msg" id="loginMsg"></div>
         <div class="otp-box" id="loginOtpBox"><p>Login OTP sent. Check your email and enter the code below.</p><label>OTP<input id="loginOtp" inputmode="numeric" maxlength="6"></label><div class="actions"><button class="btn btn-primary" type="button" id="verifyLogin">Verify login</button></div></div>
-        <div class="success-box" id="loginSuccess">Login successful. Checking subscription status.</div>
+        <div class="success-box" id="loginSuccess">Login successful. Checking payment status.</div>
       </form>
     </div>
   </section>
@@ -126,7 +126,7 @@
   $('verifySignup').addEventListener('click',function(){if(!pendingSignup){setMsg('signupMsg','Request OTP first.',true);return}api('/auth/verify-signup',{signupRequestId:pendingSignup.signupRequestId,emailOtp:clean($('emailOtp').value),phoneOtp:clean($('phoneOtp').value)}).then(function(d){localStorage.removeItem('ztToken');$('signupSuccess').textContent='Account created. Your Zukunft ID is '+d.customerNumber+'. Please login now.';$('signupSuccess').classList.add('show');setMsg('signupMsg','Verified. Account created, but portal access needs login OTP.',false);$('loginId').value=d.customerNumber||clean($('signupEmail').value);$('loginPass').value='';$('loginOtp').value='';pendingLogin=null;$('loginOtpBox').classList.remove('show');setTimeout(function(){showTab('login');setMsg('loginMsg','Login with your password. We will send an OTP before portal access.',false)},900)}).catch(function(err){setMsg('signupMsg',err.message,true)})});
   $('loginPane').addEventListener('submit',function(e){e.preventDefault();setMsg('loginMsg','Checking account...',false);api('/auth/login',{identifier:clean($('loginId').value),password:$('loginPass').value}).then(function(d){pendingLogin=d;$('loginOtp').value='';$('loginOtpBox').classList.add('show');$('loginSuccess').classList.remove('show');setMsg('loginMsg','Password verified. OTP sent to your email. Enter it to open portal.',false)}).catch(function(err){setMsg('loginMsg',err.message,true)})});
   $('requestLoginOtp').addEventListener('click',function(){setMsg('loginMsg','Sending OTP...',false);api('/auth/request-login-otp',{identifier:clean($('loginId').value)}).then(function(d){pendingLogin=d;$('loginOtpBox').classList.add('show');setMsg('loginMsg','OTP sent. Check your email.',false)}).catch(function(err){setMsg('loginMsg',err.message,true)})});
-  $('verifyLogin').addEventListener('click',function(){if(!pendingLogin){setMsg('loginMsg','Request an OTP first.',true);return}api('/auth/verify-login-otp',{userId:pendingLogin.userId,loginOtp:clean($('loginOtp').value)}).then(function(d){localStorage.setItem('ztToken',d.token);$('loginSuccess').textContent='Login successful. Checking subscription status...';$('loginSuccess').classList.add('show');setMsg('loginMsg','Verified.',false);openNext(d.token)}).catch(function(err){setMsg('loginMsg',err.message,true)})});
+  $('verifyLogin').addEventListener('click',function(){if(!pendingLogin){setMsg('loginMsg','Request OTP first.',true);return}api('/auth/verify-login-otp',{userId:pendingLogin.userId,loginOtp:clean($('loginOtp').value)}).then(function(d){localStorage.setItem('ztToken',d.token);$('loginSuccess').textContent='Login successful. Checking payment status...';$('loginSuccess').classList.add('show');setMsg('loginMsg','Verified.',false);openNext(d.token)}).catch(function(err){setMsg('loginMsg',err.message,true)})});
   var cv=$('bg'),ctx=cv.getContext('2d'),mx=0,my=0,tmx=0,tmy=0,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   function resize(){cv.width=innerWidth;cv.height=innerHeight}resize();addEventListener('resize',resize);
   addEventListener('pointermove',function(e){tmx=(e.clientX/innerWidth-.5)*2;tmy=(e.clientY/innerHeight-.5)*2},{passive:true});

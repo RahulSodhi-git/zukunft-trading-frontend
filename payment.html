@@ -14,21 +14,21 @@
   <section class="panel">
     <p class="kicker">Step 2 of 3</p>
     <h1>Activate <span class="gradient">Pro Live</span></h1>
-    <p class="lead">Your identity is verified. Activate the Pro subscription before connecting Binance Futures, Coinalyze and your trading capital.</p>
-    <div class="price"><b>$100</b><span>USD / month</span></div>
+    <p class="lead">Your identity is verified. Complete the one-time Pro activation payment before connecting Binance Futures, Coinalyze and your trading capital.</p>
+    <div class="price"><b>$100</b><span>USD one time</span></div>
     <div class="features"><div class="feature">Live Binance Futures connection</div><div class="feature">Mandatory Coinalyze market-data verification</div><div class="feature">Performance dashboard and bot controls</div><div class="feature">One trading bot per verified account</div></div>
     <button class="btn" id="pay" type="button">Continue to secure payment</button>
     <button class="btn secondary" id="continue" type="button" hidden>Continue to bot setup</button>
-    <div class="msg" id="message">Checking your subscription status...</div>
+    <div class="msg" id="message">Checking your payment status...</div>
   </section>
   <aside class="panel summary">
     <h2>Order summary</h2>
     <div class="row"><span>Plan</span><b>Zukunft Trading Pro</b></div>
-    <div class="row"><span>Billing</span><b>Monthly</b></div>
+    <div class="row"><span>Billing</span><b>One-time payment</b></div>
     <div class="row"><span>Amount</span><b>$100 USD</b></div>
     <div class="row"><span>Next step</span><b>API and capital setup</b></div>
-    <div class="secure"><b>Secure Stripe Checkout</b><br>Payment details are entered on Stripe's hosted checkout. Zukunft Trading does not receive or store your card number.</div>
-    <p class="risk">Trading cryptocurrency futures involves substantial risk of loss. The subscription provides access to the software and does not guarantee profits or trading results.</p>
+    <div class="secure"><b>Secure PayPal Checkout</b><br>Payment details are entered on PayPal's hosted checkout. Zukunft Trading does not receive or store your card number.</div>
+    <p class="risk">Trading cryptocurrency futures involves substantial risk of loss. This payment provides access to the software and does not guarantee profits or trading results.</p>
   </aside>
 </main>
 <script>
@@ -36,8 +36,8 @@
   var API=window.ZUKUNFT_API_URL||(location.protocol==='file:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'?'http://localhost:5050':'https://zukunft-trading-backend.onrender.com'),token=localStorage.getItem('ztToken')||localStorage.getItem('zukunftToken'),pay=document.getElementById('pay'),next=document.getElementById('continue'),msg=document.getElementById('message');
   function setMessage(value,error,ok){msg.textContent=value;msg.className='msg'+(error?' err':ok?' ok':'')}
   function request(path,options){options=options||{};return fetch(API+path,{method:options.method||'GET',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:options.body?JSON.stringify(options.body):undefined}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'Request failed');return d})})}
-  function active(){pay.hidden=true;next.hidden=false;setMessage('Pro subscription is active. Continue to your bot setup.',false,true)}
-  function load(){if(!token){location.href='account.html';return}var params=new URLSearchParams(location.search),sessionId=params.get('session_id');if(sessionId){setMessage('Confirming payment...');request('/payments/confirm',{method:'POST',body:{sessionId:sessionId}}).then(function(d){if(d.active)active();else setMessage('Payment has not completed yet. Refresh this page after finishing Checkout.',true)}).catch(function(err){setMessage(err.message,true)});return}request('/payments/status').then(function(d){if(d.status==='active')active();else if(!d.checkoutConfigured)setMessage('Stripe setup is pending. Add the Stripe secret and webhook settings in Render.',true);else setMessage(params.get('cancelled')?'Payment was cancelled. You can try again when ready.':'Your account is verified and ready for payment.')}).catch(function(err){if(/Unauthorized/i.test(err.message))location.href='account.html';else setMessage(err.message,true)})}
+  function active(){pay.hidden=true;next.hidden=false;setMessage('Your one-time Pro activation is complete. Continue to your bot setup.',false,true)}
+  function load(){if(!token){location.href='account.html';return}var params=new URLSearchParams(location.search),orderId=params.get('token');if(orderId){setMessage('Confirming PayPal payment...');request('/payments/confirm',{method:'POST',body:{orderId:orderId}}).then(function(d){if(d.active){history.replaceState(null,'','payment.html');active()}else setMessage('Payment has not completed yet. Refresh this page after finishing PayPal Checkout.',true)}).catch(function(err){setMessage(err.message,true)});return}request('/payments/status').then(function(d){if(d.status==='active')active();else if(!d.checkoutConfigured)setMessage('PayPal setup is pending. Add the PayPal Client ID and Secret in Render.',true);else setMessage(params.get('cancelled')?'Payment was cancelled. You can try again when ready.':'Your account is verified and ready for the one-time payment.')}).catch(function(err){if(/Unauthorized/i.test(err.message))location.href='account.html';else setMessage(err.message,true)})}
   pay.addEventListener('click',function(){pay.disabled=true;setMessage('Opening secure Checkout...');request('/payments/checkout',{method:'POST'}).then(function(d){if(d.active){active();return}location.href=d.checkoutUrl}).catch(function(err){setMessage(err.message,true);pay.disabled=false})});
   next.addEventListener('click',function(){location.href='portal.html'});document.getElementById('logout').addEventListener('click',function(){localStorage.removeItem('ztToken');localStorage.removeItem('zukunftToken')});load();
 })();
