@@ -13,9 +13,9 @@
     try { const data = JSON.parse(text); text = data.message || data.msg || data.error || text; } catch {}
     if (/Invalid\/Missing API key/i.test(text)) return 'Coinalyze did not accept this key. Copy your API key from Coinalyze, not your Binance key.';
     if (/cooldown|banned until|too many requests/i.test(text)) {
-      const retry = text.match(/Retry after ([\dT:.Z-]+)/i);
+      const retry = text.match(/Retry after (\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z)/i);
       const time = retry && Number.isFinite(Date.parse(retry[1])) ? new Date(retry[1]).toLocaleString() : null;
-      return 'Binance has temporarily blocked the verification server.' + (time ? ' Retry after ' + time + '.' : ' Please wait before retrying.') + ' Your keys have not been rejected or saved.';
+      return 'Binance connection is temporarily paused.' + (time ? ' Try after ' + time + '.' : ' Please wait before retrying.') + ' This is a server cooldown, not an invalid-key error. Your saved keys are unchanged.';
     }
     if (text === 'Invalid input') return 'Check that you pasted the service API key and secret, not your Zukunft account ID.';
     return text;
@@ -29,7 +29,7 @@
     return data;
   }
   function card(provider, name, subtitle, fields, url, link, note) {
-    return '<article class="card connection-card"><div class="connection-heading"><div class="provider"><span class="provider-icon '+provider+'">'+(provider==='binance'?'BN':'CZ')+'</span><h2>'+name+'</h2></div><span class="tag" id="'+provider+'Status">Not connected</span></div><p class="muted">'+subtitle+'</p><form id="'+provider+'Form" autocomplete="off">'+fields+'<div class="button-row"><button id="'+provider+'Save" class="primary">Verify & save</button><button id="'+provider+'Change" type="button" class="quiet" hidden>Change keys</button><button id="'+provider+'Cancel" type="button" class="quiet" hidden>Cancel</button></div><p id="'+provider+'Message" class="message" role="status" aria-live="polite"></p></form><div class="provider-help"><span>'+note+'</span><a href="'+url+'" target="_blank" rel="noopener noreferrer">'+link+' ↗</a></div></article>';
+    return '<article class="card connection-card"><div class="connection-heading"><div class="provider"><span class="provider-icon '+provider+'">'+(provider==='binance'?'BN':'CZ')+'</span><h2>'+name+'</h2></div><span class="tag" id="'+provider+'Status">Not connected</span></div><p class="muted">'+subtitle+'</p><form id="'+provider+'Form" autocomplete="off">'+fields+'<div class="button-row"><button id="'+provider+'Save" class="primary">Connect '+(provider==='binance'?'Binance':'Coinalyze')+'</button><button id="'+provider+'Change" type="button" class="quiet" hidden>Change keys</button><button id="'+provider+'Cancel" type="button" class="quiet" hidden>Cancel</button></div><p id="'+provider+'Message" class="message" role="status" aria-live="polite"></p></form>'+(provider==='binance'?'<p id="binanceAccountInfo" class="muted" hidden></p>':'')+'<div class="provider-help"><span>'+note+'</span><a href="'+url+'" target="_blank" rel="noopener noreferrer">'+link+' ↗</a></div></article>';
   }
   function field(id, label) { return '<label for="'+id+'">'+label+'</label><input id="'+id+'" name="zt-'+id+'-credential" type="password" autocomplete="new-password" autocapitalize="none" spellcheck="false" placeholder="Paste '+label.toLowerCase()+'" required>'; }
   $('connections').innerHTML = card('binance','Binance Futures','Connect the exchange account your bot will trade on.',field('binanceKey','Binance API key')+field('binanceSecret','Binance secret key'),'https://www.binance.com/en/my/settings/api-management','API management','Enable Futures. Keep withdrawals disabled.') + card('coinalyze','Coinalyze','Connect market data used by your trading strategies.',field('coinalyzeKey','Coinalyze API key'),'https://api.coinalyze.net/v1/doc/','Get your API key','Use a Coinalyze key, not a Binance key.');
@@ -42,6 +42,11 @@
     fields[provider].forEach(id => { $(id).value=''; $(id).disabled=saved; $(id).placeholder=saved?'•••••••••••• · saved securely':'Paste '+(id==='binanceSecret'?'Binance secret key':provider==='binance'?'Binance API key':'Coinalyze API key'); });
     $(provider+'Save').hidden=!editing; $(provider+'Change').hidden=!saved; $(provider+'Cancel').hidden=true;
     $(provider+'Change').disabled=connections.canReplace===false;
+    if (provider==='binance') {
+      const account=connections.binanceAccount;
+      $('binanceAccountInfo').hidden=!saved||!account;
+      $('binanceAccountInfo').textContent=account?'Account loaded '+new Date(account.loadedAt).toLocaleString()+'. Futures wallet: '+number(account.walletBalance)+' '+account.unit+' · Available: '+number(account.availableBalance)+' '+account.unit+(account.canTrade?'':' · Binance account trading is disabled; connection is read-only.') : '';
+    }
   }
   async function loadConnections() {
     const data = await api('/settings/connections'); connections = data.connections;
@@ -50,16 +55,16 @@
     else { const complete = isConnected('binance') && isConnected('coinalyze'); $('continue').disabled=!complete; $('progressText').textContent=complete?'Both connections saved. Your trading interface is ready to open.':'Connect both services to continue. No trading amount is needed here.'; }
   }
   for (const provider of ['binance','coinalyze']) {
-    $(provider+'Change').addEventListener('click', () => { fields[provider].forEach(id=>{$(id).disabled=false;$(id).placeholder='Paste replacement key';}); $(provider+'Save').hidden=false; $(provider+'Change').hidden=true; $(provider+'Cancel').hidden=false; message(provider+'Message','Your saved connection stays active until replacement keys are verified.'); $(fields[provider][0]).focus(); });
+    $(provider+'Change').addEventListener('click', () => { fields[provider].forEach(id=>{$(id).disabled=false;$(id).placeholder='Paste replacement key';}); $(provider+'Save').hidden=false; $(provider+'Change').hidden=true; $(provider+'Cancel').hidden=false; message(provider+'Message','Your saved connection stays active until the new keys successfully load your account.'); $(fields[provider][0]).focus(); });
     $(provider+'Cancel').addEventListener('click', () => {updateProvider(provider);message(provider+'Message');});
     $(provider+'Form').addEventListener('submit', async event => {
       event.preventDefault(); const values = fields[provider].map(id=>$(id).value.trim());
       if (values.some(value=>value.length<(provider==='binance'?16:12) || /^ZT-/i.test(value) || /[•#\s]/.test(value))) { message(provider+'Message','Paste the actual '+(provider==='binance'?'Binance API key and secret':'Coinalyze API key')+'. Your Zukunft account ID is not an API key.','error'); return; }
       const body = provider==='binance'?{binanceApiKey:values[0],binanceApiSecret:values[1]}:{coinalyzeApiKey:values[0]};
-      const button = $(provider+'Save'); button.disabled=true; button.textContent='Checking connection…'; message(provider+'Message','Verifying and encrypting your keys…');
+      const button = $(provider+'Save'); button.disabled=true; button.textContent=provider==='binance'?'Loading account…':'Connecting…'; message(provider+'Message',provider==='binance'?'Loading your Binance account…':'Connecting to Coinalyze…');
       try { const data = await api((trading?'/settings/':'/onboarding/')+provider,body); setup=data.setup; await loadConnections(); message(provider+'Message','Connected. Keys saved encrypted and hidden.','success'); }
       catch (error) { message(provider+'Message',error.message,'error'); }
-      finally { fields[provider].forEach(id=>{$(id).value='';}); button.disabled=false; button.textContent='Verify & save'; }
+      finally { fields[provider].forEach(id=>{$(id).value='';}); button.disabled=false; button.textContent='Connect '+(provider==='binance'?'Binance':'Coinalyze'); }
     });
   }
   $('logout').addEventListener('click',endSession);
